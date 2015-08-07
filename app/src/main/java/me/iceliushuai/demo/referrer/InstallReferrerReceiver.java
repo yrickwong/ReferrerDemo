@@ -1,4 +1,4 @@
-package com.github.hiro.demo.referrerdemo;
+package me.iceliushuai.demo.referrer;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
