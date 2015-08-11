@@ -1,12 +1,19 @@
 package me.iceliushuai.demo.referrer;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.support.v4.content.LocalBroadcastManager;
 
 public class MainActivity extends Activity {
+
+    TextView referrerTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,6 +22,25 @@ public class MainActivity extends Activity {
         TextView referrerTv = (TextView) findViewById(R.id.referrer);
         String referrer = InstallReferrerReceiver.getSavedReferrer(this);
         referrerTv.setText(referrer == null ? "Empty" : referrer);
+
+        IntentFilter filter = new IntentFilter(InstallReferrerReceiver.REFERRER_RECEIVED);
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplication());
+        lbm.registerReceiver(mReferrerReceived, filter);
+    }
+
+    private BroadcastReceiver mReferrerReceived = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String referrer = intent.getStringExtra("referrer");
+            referrerTv.setText(referrer == null ? "Empty" : referrer);
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplication());
+        lbm.unregisterReceiver(mReferrerReceived);
     }
 
     @Override
