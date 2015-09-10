@@ -14,6 +14,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+/**
+ * MainActivity
+ */
 public class MainActivity extends Activity {
 
     TextView referrerTv;
