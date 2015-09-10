@@ -11,9 +11,13 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class MainActivity extends Activity {
 
     TextView referrerTv;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,14 @@ public class MainActivity extends Activity {
         super.onDestroy();
         LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplication());
         lbm.unregisterReceiver(mReferrerReceived);
+        mTracker = AnalyticsTrackers.getAppTracker();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName("MainActivity");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

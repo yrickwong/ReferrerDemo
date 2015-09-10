@@ -10,6 +10,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.analytics.CampaignTrackingReceiver;
+import com.google.android.gms.analytics.HitBuilders;
+
 public class InstallReferrerReceiver extends BroadcastReceiver {
 
     private static final String LOG_TAG = "ReferrerReceiver";
@@ -26,7 +29,7 @@ public class InstallReferrerReceiver extends BroadcastReceiver {
             if (args == null) {
                 return;
             }
-
+            new CampaignTrackingReceiver().onReceive(context, intent);
             for (String key : args.keySet()) {
                 Log.d(LOG_TAG, key + " = " + args.get(key));
             }
@@ -34,13 +37,27 @@ public class InstallReferrerReceiver extends BroadcastReceiver {
             String referrer = args.getString("referrer");
             if (!TextUtils.isEmpty(referrer)) {
                 saveReferrer(context, referrer);
-
                 LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(context.getApplicationContext());
                 Intent referrerReceived = new Intent(REFERRER_RECEIVED);
                 referrerReceived.putExtra("referrer", referrer);
                 lbm.sendBroadcast(referrerReceived);
+                sendAnalytivs(referrer);
             }
         }
+    }
+
+    /**
+     * 发送GA统计
+     *
+     * @param referrer
+     */
+    private static void sendAnalytivs(String referrer) {
+        AnalyticsTrackers.getAppTracker().send(new HitBuilders.EventBuilder()
+                .setCategory("Install")
+                .setAction("referrer_count")
+                .setLabel(referrer)
+                .setValue(1)
+                .build());
     }
 
     public static void saveReferrer(Context context, String referrer) {
