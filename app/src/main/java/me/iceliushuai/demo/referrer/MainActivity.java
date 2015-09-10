@@ -6,7 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class MainActivity extends Activity {
+
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,6 +20,14 @@ public class MainActivity extends Activity {
         TextView referrerTv = (TextView) findViewById(R.id.referrer);
         String referrer = InstallReferrerReceiver.getSavedReferrer(this);
         referrerTv.setText(referrer == null ? "Empty" : referrer);
+        mTracker = AnalyticsTrackers.getAppTracker();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName("MainActivity");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
