@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
         IntentFilter filter = new IntentFilter(InstallReferrerReceiver.REFERRER_RECEIVED);
         LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplication());
         lbm.registerReceiver(mReferrerReceived, filter);
+        mTracker = AnalyticsTrackers.getAppTracker();
     }
 
     private BroadcastReceiver mReferrerReceived = new BroadcastReceiver() {
@@ -40,19 +41,19 @@ public class MainActivity extends Activity {
         }
     };
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplication());
-        lbm.unregisterReceiver(mReferrerReceived);
-        mTracker = AnalyticsTrackers.getAppTracker();
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
         mTracker.setScreenName("MainActivity");
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplication());
+        lbm.unregisterReceiver(mReferrerReceived);
     }
 
     @Override
